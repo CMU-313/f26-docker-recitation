@@ -11,7 +11,7 @@ def read_root():
 #TODO Fix recitation hours to be correct for this semester.
 RECITATION_HOURS = {"a": "09:00~09:50", "b": "10:00~10:50",
                     "c": "11:00~11:50", "d": "12:00~12:50"}
-MICROSERVICE_LINK = "http://17313-teachers.s3d.cmu.edu:8080/section_info/"
+MICROSERVICE_LINK = "https://cmu-313.github.io/section_info/"
 
 
 @app.get("/section_info/{section_id}")
@@ -22,16 +22,16 @@ def get_section_info(section_id: str):
 
     section_id = section_id.lower()
 
-    response = requests.get(MICROSERVICE_LINK + section_id)
+    response = requests.get(MICROSERVICE_LINK + section_id + ".json")
+    if response.status_code != 200:
+        raise HTTPException(status_code=404, detail="Invalid section id")
 
     # You can check out what the response body looks like in terminal using the print statement
     data = response.json()
     print(data)
+    # Note: some sections have only one TA
     ta_name_list = data["ta"]
-    ta1_name = ta_name_list[0]
-    ta2_name = ta_name_list[1]
-
-    print(ta1_name)
+    print(ta_name_list)
 
     # TODO Fix this to return correct values for correct sections.
     if section_id == "a":
